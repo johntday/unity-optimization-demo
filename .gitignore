@@ -104,3 +104,15 @@ InitTestScene*.unity*
 *.zip.meta
 *.bak
 *.bak.meta
+
+# SOURCE PACKAGES
+FlatKit/
+FlatKit.meta
+Wingman/
+Wingman.meta
+vFolders/
+vFolders.meta
+Better Hierarchy/
+Better Hierarchy.meta
+FavoritesWindow/
+FavoritesWindow.meta
