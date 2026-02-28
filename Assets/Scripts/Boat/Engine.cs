@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -30,11 +30,19 @@ namespace BoatAttack
 
         private void Awake()
         {
-			if(engineSound)
+			if (engineSound && engineSound.clip)
 				engineSound.time = UnityEngine.Random.Range(0f, engineSound.clip.length); // randomly start the engine sound
+			else if (engineSound)
+				Debug.LogWarning($"Engine on {gameObject.name}: engineSound has no AudioClip assigned.");
+			else
+				Debug.LogWarning($"Engine on {gameObject.name}: engineSound AudioSource not found.");
 
-			if(waterSound)
+			if (waterSound && waterSound.clip)
 				waterSound.time = UnityEngine.Random.Range(0f, waterSound.clip.length); // randomly start the water sound
+			else if (waterSound)
+				Debug.LogWarning($"Engine on {gameObject.name}: waterSound has no AudioClip assigned.");
+			else
+				Debug.LogWarning($"Engine on {gameObject.name}: waterSound AudioSource not found.");
 
             _guid = GetInstanceID(); // Get the engines GUID for the buoyancy system
             _point = new NativeArray<float3>(1, Allocator.Persistent);
@@ -42,8 +50,10 @@ namespace BoatAttack
 
         private void FixedUpdate()
         {
+            if (RB == null) return;
             VelocityMag = RB.linearVelocity.sqrMagnitude; // get the sqr mag
-            engineSound.pitch = Mathf.Max(VelocityMag * 0.01f, 0.3f); // use some magice numbers to control the pitch of the engine sound
+            if (engineSound)
+                engineSound.pitch = Mathf.Max(VelocityMag * 0.01f, 0.3f); // use some magice numbers to control the pitch of the engine sound
 
             // Get the water level from the engines position and store it
             _point[0] = transform.TransformPoint(enginePosition);

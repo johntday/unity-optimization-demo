@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -32,7 +32,7 @@ namespace BoatAttack
 
         [NonSerialized] public readonly List<float> SplitTimes = new List<float>();
 
-        public CinemachineVirtualCamera cam;
+        public CinemachineCamera cam;
         private float _camFovVel;
         [NonSerialized] public RaceUI RaceUi;
         private Object _controller;
@@ -97,7 +97,9 @@ namespace BoatAttack
             if (cam)
             {
                 var fov = Mathf.SmoothStep(80f, 100f, engine.VelocityMag * 0.005f);
-                cam.m_Lens.FieldOfView = Mathf.SmoothDamp(cam.m_Lens.FieldOfView, fov, ref _camFovVel, 0.5f);
+                var lens = cam.Lens;
+                lens.FieldOfView = Mathf.SmoothDamp(lens.FieldOfView, fov, ref _camFovVel, 0.5f);
+                cam.Lens = lens;
             }
         }
 

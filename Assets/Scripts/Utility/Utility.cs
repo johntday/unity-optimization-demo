@@ -82,10 +82,10 @@ public static class Utility
     public static void StaticObjects()
     {
         // remove the noise on Cinemachine cameras
-        var cameras = GameObject.FindObjectsOfType<CinemachineVirtualCamera>();
+        var cameras = GameObject.FindObjectsOfType<CinemachineCamera>();
         foreach (var cam in cameras)
         {
-            var comp = cam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+            var comp = cam.GetCinemachineComponent(CinemachineCore.Stage.Noise) as CinemachineBasicMultiChannelPerlin;
             if(comp)
                 comp.AmplitudeGain = 0.0f;
         }

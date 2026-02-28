@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -17,8 +18,9 @@ public class SkyboxFeature : ScriptableRendererFeature
         public float Scale;
         private static SkyboxSystem system;
         public LayerMask mask;
-        
-        public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
+
+        [Obsolete("Use RecordRenderGraph instead. Kept for compatibility mode.")]
+        public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
         {
             if (system == null)
                 system = FindObjectOfType<SkyboxSystem>();
@@ -30,7 +32,8 @@ public class SkyboxFeature : ScriptableRendererFeature
 
             m_TransparentFilteringSettings = new FilteringSettings(RenderQueueRange.transparent, mask);
         }
-        
+
+        [Obsolete("Use RecordRenderGraph instead. Kept for compatibility mode.")]
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
             var cameraData = renderingData.cameraData;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using GameplayIngredients;
 using UnityEngine;
@@ -362,8 +362,20 @@ namespace BoatAttack
             if (_colorPaletteRaw == null)
                 _colorPaletteRaw = Resources.Load<Texture2D>("textures/colorSwatch");
 
-            ColorPalette = _colorPaletteRaw.GetPixels();
-            Debug.Log($"Found {ColorPalette.Length} colors.");
+            if (_colorPaletteRaw != null)
+            {
+                ColorPalette = _colorPaletteRaw.GetPixels();
+                Debug.Log($"Found {ColorPalette.Length} colors.");
+            }
+            else
+            {
+                Debug.LogWarning("Color swatch texture (Resources/textures/colorSwatch) not found. Using fallback palette.");
+                ColorPalette = new[]
+                {
+                    Color.white, Color.red, Color.green, Color.blue, Color.yellow,
+                    Color.cyan, Color.magenta, new Color(1f, 0.5f, 0f), Color.gray
+                };
+            }
         }
 
     }
