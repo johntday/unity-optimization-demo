@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using Cinemachine;
+using Unity.Cinemachine;
 using BoatAttack.UI;
 using UnityEngine.Profiling;
 using Object = UnityEngine.Object;
