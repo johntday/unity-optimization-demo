@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Experimental.Rendering;
@@ -46,6 +46,9 @@ namespace WaterSystem
         public WaterSurfaceData surfaceData;
         [SerializeField]
         private WaterResources resources;
+
+
+        private int _pendingDepthCaptureFrames;
 
         private static readonly int CameraRoll = Shader.PropertyToID("_CameraRoll");
         private static readonly int InvViewProjection = Shader.PropertyToID("_InvViewProjection");
@@ -172,11 +175,13 @@ namespace WaterSystem
                 resources = Resources.Load("WaterResources") as WaterResources;
             }
             if(Application.platform != RuntimePlatform.WebGLPlayer) // TODO - bug with Opengl depth
-                CaptureDepthMap();
+                _pendingDepthCaptureFrames = 2;
         }
 
         private void LateUpdate()
         {
+            if (_pendingDepthCaptureFrames > 0 && --_pendingDepthCaptureFrames == 0)
+                CaptureDepthMap();
             GerstnerWavesJobs.UpdateHeights();
         }
 
@@ -303,7 +308,9 @@ namespace WaterSystem
                 _rampTexture = new Texture2D(128, 4, GraphicsFormat.R8G8B8A8_SRGB, TextureCreationFlags.None);
             _rampTexture.wrapMode = TextureWrapMode.Clamp;
 
-            var defaultFoamRamp = resources.defaultFoamRamp;
+            var defaultFoamRamp = resources != null ? resources.defaultFoamRamp : null;
+            if (defaultFoamRamp == null && resources != null)
+                Debug.LogWarning("WaterResources.defaultFoamRamp is missing. Reassign it in the WaterResources asset Inspector to restore foam appearance.");
 
             var cols = new Color[512];
             for (var i = 0; i < 128; i++)
@@ -319,10 +326,10 @@ namespace WaterSystem
                 switch(surfaceData._foamSettings.foamType)
                 {
                     case 0: // default
-                        cols[i + 256] = defaultFoamRamp.GetPixelBilinear(i / 128f , 0.5f);
+                        cols[i + 256] = defaultFoamRamp != null ? defaultFoamRamp.GetPixelBilinear(i / 128f , 0.5f) : Color.black;
                         break;
                     case 1: // simple
-                        cols[i + 256] = defaultFoamRamp.GetPixelBilinear(surfaceData._foamSettings.basicFoam.Evaluate(i / 128f) , 0.5f);
+                        cols[i + 256] = defaultFoamRamp != null ? defaultFoamRamp.GetPixelBilinear(surfaceData._foamSettings.basicFoam.Evaluate(i / 128f) , 0.5f) : Color.black;
                         break;
                     case 2: // custom
                         cols[i + 256] = Color.black;
