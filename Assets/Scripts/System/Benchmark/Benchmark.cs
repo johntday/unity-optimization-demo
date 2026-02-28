@@ -34,7 +34,6 @@ namespace BoatAttack.Benchmark
         public static int CurrentRunIndex;
         public static int CurrentRunFrame;
         private int _totalRunFrames;
-        private bool _running = false;
 
         // Bench results
         private readonly List<PerfBasic> _perfData = new List<PerfBasic>();
@@ -79,7 +78,7 @@ namespace BoatAttack.Benchmark
 
         private void OnDestroy()
         {
-            RenderPipelineManager.endFrameRendering -= EndFrameRendering;
+            RenderPipelineManager.endContextRendering -= EndContextRendering;
 #if UNITY_EDITOR
             EditorSceneManager.playModeStartScene = null; // need to reset benchmark start scene once benchmark is destroyed
 #endif
@@ -127,7 +126,7 @@ namespace BoatAttack.Benchmark
                 _stats.StartRun(Current.benchmarkName, Current.runLength);
 
             BeginRun();
-            RenderPipelineManager.endFrameRendering += EndFrameRendering;
+            RenderPipelineManager.endContextRendering += EndContextRendering;
         }
 
         private void BeginRun()
@@ -135,7 +134,7 @@ namespace BoatAttack.Benchmark
             CurrentRunFrame = 0;
         }
 
-        private void EndFrameRendering(ScriptableRenderContext context, Camera[] cameras)
+        private void EndContextRendering(ScriptableRenderContext context, List<Camera> cameras)
         {
             CurrentRunFrame++;
             if (CurrentRunFrame < Current.runLength) return;
@@ -150,7 +149,7 @@ namespace BoatAttack.Benchmark
             }
             else
             {
-                RenderPipelineManager.endFrameRendering -= EndFrameRendering;
+                RenderPipelineManager.endContextRendering -= EndContextRendering;
                 EndBenchmark();
             }
         }
